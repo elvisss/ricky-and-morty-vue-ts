@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Character Layout</h1>
+    <router-view />
   </div>
 </template>
 
