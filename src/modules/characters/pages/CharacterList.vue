@@ -1,21 +1,10 @@
 <template>
-  <div>
-    <h1>Character List</h1>
-  </div>
+  <h2>Characters List</h2>
+  <CardList />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  setup () {
-
-
-    return {}
-  }
-})
+<script setup lang="ts">
+import CardList from '@/modules/characters/components/CardList.vue'
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

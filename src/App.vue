@@ -6,7 +6,7 @@ import { routeLinks } from './router/link-routes'
 <template>
   <div class="wrapper">
     <header>
-      <NavBar title="BreakingBad" :links="routeLinks" />
+      <NavBar title="Ricky and Morty" :links="routeLinks" />
     </header>
 
     <main>
