@@ -1,4 +1,4 @@
-# breaking-bad-ts
+# Ricky and Morty - Vue - Vue Query
 
 This template should help get you started developing with Vue 3 in Vite.
 

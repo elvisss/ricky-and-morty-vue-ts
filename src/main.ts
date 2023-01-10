@@ -6,7 +6,18 @@ import router from './router'
 import './assets/main.css'
 
 const app = createApp(App)
-app.use(VueQueryPlugin)
+
+VueQueryPlugin.install(app, {
+  queryClientConfig: {
+    defaultOptions: {
+      queries: {
+        cacheTime: 1000 * 60, // 1 minute
+        refetchOnReconnect: 'always'
+      }
+    }
+  }
+})
+
 app.use(router)
 
 app.mount('#app')
