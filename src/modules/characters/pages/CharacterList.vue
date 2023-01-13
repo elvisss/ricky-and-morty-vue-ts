@@ -1,8 +1,15 @@
 <template>
-  <h2 v-if="characterStore.characters.isLoading">Loading...</h2>
+  <template v-if="characterStore.characters.isLoading">
+    <h2>Loading...</h2>
+  </template>
   <template v-else>
-    <h2>Characters List</h2>
-    <CardList :characters="characterStore.characters.list" />
+    <h3 v-if="characterStore.characters.hasError">
+      {{ characterStore.characters.errorMessage }}
+    </h3>
+    <template v-else>
+      <h2>Characters List</h2>
+      <CardList :characters="characterStore.characters.list" />
+    </template>
   </template>
 </template>
 
@@ -17,10 +24,14 @@ const getCharactersCacheFirst = async (): Promise<Character[]> => {
   if (characterStore.characters.count) {
     return characterStore.characters.list
   }
-  const { data } = await rickyAndMorphyApi.get<RickyAndMortyResponse>(
-    '/character'
-  )
-  return data.results
+  try {
+    const { data } = await rickyAndMorphyApi.get<RickyAndMortyResponse>(
+      '/character'
+    )
+    return data.results
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
 }
 
 useQuery({
@@ -28,6 +39,9 @@ useQuery({
   queryFn: getCharactersCacheFirst,
   onSuccess: (data) => {
     characterStore.loadedCharacters(data)
+  },
+  onError(error: any) {
+    characterStore.loadCharactersFailed(error.message)
   },
 })
 </script>

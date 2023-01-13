@@ -13,8 +13,9 @@ VueQueryPlugin.install(app, {
     defaultOptions: {
       queries: {
         cacheTime: 1000 * 60, // 1 minute
-        refetchOnReconnect: 'always'
-      }
+        refetchOnReconnect: 'always',
+        retry: 0
+      },
     }
   }
 })
