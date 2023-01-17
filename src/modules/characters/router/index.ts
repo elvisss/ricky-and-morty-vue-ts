@@ -12,7 +12,7 @@ export const charactersRoute: RouteRecordRaw = {
   component: CharacterLayout,
   children: [
     {
-      path: 'by/id',
+      path: 'by/:id',
       name: 'character-id',
       component: CharacterId,
       meta: {
@@ -21,7 +21,7 @@ export const charactersRoute: RouteRecordRaw = {
       },
     },
     {
-      path: 'list',
+      path: '/characters/list',
       name: 'character-list',
       component: CharacterList,
       meta: {
@@ -30,7 +30,7 @@ export const charactersRoute: RouteRecordRaw = {
       },
     },
     {
-      path: 'search',
+      path: '/characters/search',
       name: 'character-search',
       component: CharacterSearch,
       meta: {
