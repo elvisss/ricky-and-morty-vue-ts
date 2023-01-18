@@ -1,22 +1,19 @@
 <template>
-  <template v-if="characterStore.ids.isLoading">
+  <template v-if="isLoading">
     <h2>Loading...</h2>
   </template>
   <template v-else>
-    <h3 v-if="characterStore.ids.hasError">
-      {{ characterStore.ids.errorMessage }}
+    <h3 v-if="hasError">
+      {{ errorMessage }}
     </h3>
-    <template v-else>
-      <h1>{{ characterStore.ids.list[id].name }}</h1>
+    <template v-else-if="character">
+      <h1>{{ character.name }}</h1>
       <div class="character-container">
-        <img
-          :src="characterStore.ids.list[id].image"
-          :alt="characterStore.ids.list[id].name"
-        />
+        <img :src="character.image" :alt="character.name" />
         <ul>
-          <li>Origin: {{ characterStore.ids.list[id].origin.name }}</li>
-          <li>Specie: {{ characterStore.ids.list[id].species }}</li>
-          <li>Status: {{ characterStore.ids.list[id].status }}</li>
+          <li>Origin: {{ character.origin.name }}</li>
+          <li>Specie: {{ character.species }}</li>
+          <li>Status: {{ character.status }}</li>
           <li>Episodes: <br />{{ getEpisodes }}</li>
         </ul>
       </div>
@@ -25,53 +22,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useQuery } from '@tanstack/vue-query'
-import rickyAndMorphyApi from '@/api/rickyAndMorphyApi'
-import characterStore from '@/store/characters.store'
-import type { Character } from '../interfaces/character'
+import { watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import useCharacter from '../composables/useCharacter'
 
+const router = useRouter()
 const route = useRoute()
 const { id } = route.params as { id: string }
+const { character, isLoading, hasError, errorMessage, getEpisodes } =
+  useCharacter(id)
 
-characterStore.startLoadingCharacterById()
-
-const getCharacterCacheByIdFirst = async (
-  characterId: string
-): Promise<Character> => {
-  if (characterStore.checkIdInStore(characterId)) {
-    return characterStore.ids.list[characterId]
+watchEffect(() => {
+  if (!isLoading.value && hasError.value) {
+    router.replace({
+      path: '/characters',
+    })
   }
-  try {
-    const { data } = await rickyAndMorphyApi.get<Character>(
-      `/character/${characterId}`
-    )
-    return data
-  } catch (error: any) {
-    throw new Error(error.message)
-  }
-}
-
-const getEpisodes = computed(() => {
-  const episodesNumber: string[] = []
-  characterStore.ids.list[id].episode.forEach((episode) => {
-    const url = episode.split('/')
-    const episodeNumber = url[url.length - 1]
-    episodesNumber.push(episodeNumber)
-  })
-  return episodesNumber.join(', ')
-})
-
-useQuery({
-  queryKey: ['characters', id],
-  queryFn: () => getCharacterCacheByIdFirst(id),
-  onSuccess: (data) => {
-    characterStore.loadedCharacterById(data)
-  },
-  onError(error: any) {
-    characterStore.loadCharacterByIdFailed(error.message)
-  },
 })
 </script>
 
